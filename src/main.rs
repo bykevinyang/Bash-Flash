@@ -1,30 +1,34 @@
 use std::collections::HashMap;
 
+use card::CardStack;
+
+use crate::card:: {CardStatistics, Card};
+
 mod bash_flash;
 mod card;
+mod set;
 
 fn main() {
     bash_flash::start::run();
-    let mut set = set::Set {
-        title: "Les Mots De Liason".to_string(),
-        subject: "French".to_string(),
-        cards: HashMap::new(),
-    };
-    println!("{:?}", set);
-    set.add_card("Joe".to_string(), "Mama".to_string());
-    println!("{:?}", set);
-    set.remove_card("Joe".to_string());
-    println!("{:?}", set);
-
-    // // Reading from console:
-    // let mut line = String::new();
-    // println!("Enter your name : ");
-    // let b1 = std::io::stdin().read_line(&mut line).unwrap();
-    // println!("Hello, {}", line);
-    // println!("no of bytes read , {}", b1);
-
-    // // Writing to console:
-    // let b1 = std::io::stdout().write("Tutorials ".as_bytes()).unwrap();
-    // let b2 = std::io::stdout().write(String::from("Point").as_bytes()).unwrap();
-    // std::io::stdout().write(format!("\nbytes written {}", (b1+b2)).as_bytes()).unwrap();
+    // let mut set = set::Set {
+    //     title: "Les Mots De Liason".to_string(),
+    //     subject: "French".to_string(),
+    //     cards: CardStack::build_cardstack(vec![])
+    // };
+    let card1 = Card::build_card("Joe".to_string(), "Mama".to_string());
+    let card2 = Card::build_card("term".to_string(), "defi".to_owned());
+    let card3 = Card::build_card("Hi".to_string(), "there!".to_string());
+    let card4 = Card::build_card("Why".to_string(), "leave me alone".to_string());
+    let mut cardStack = CardStack::build_cardstack(vec![]);
+    cardStack.add_card_to_stack(card1);
+    cardStack.add_card_to_stack(card2);
+    cardStack.add_card_to_stack(card3);
+    cardStack.add_card_to_stack(card4);
+    println!("{}", cardStack);
+    cardStack.shuffle();
+    println!("{}", cardStack);
+    cardStack.shuffle();
+    println!("{}", cardStack);
+    cardStack.shuffle();
+    println!("{}", cardStack);
 }
