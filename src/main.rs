@@ -16,7 +16,7 @@ fn main() {
     //     subject: "French".to_string(),
     //     cards: CardStack::build_cardstack(vec![])
     // };
-    Set::read_yml("test".to_string());
+    println!("{:?}", Set::read_yml("test".to_string()));
     // let card1 = Card::build_card("Joe".to_string(), "Mama".to_string());
     // let card2 = Card::build_card("term".to_string(), "defi".to_owned());
     // let card3 = Card::build_card("Hi".to_string(), "there!".to_string());

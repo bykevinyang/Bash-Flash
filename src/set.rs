@@ -26,7 +26,8 @@ impl Set {
         let docs = YamlLoader::load_from_str(&raw).unwrap();
         let doc = &docs[0];
 
-        let title = doc["Title"][0].as_str();
+        let title = doc["Title"].as_str();
+
         match title {
             None => {
                 return Err("Incorrect File Setup. No Title".to_string());
@@ -34,18 +35,57 @@ impl Set {
             Some(x) => x
         };
 
-        let subject = doc["Subject"][0].as_str();
+        let subject = doc["Subject"].as_str();
         match subject {
             None => {
                 return Err("Incorrect File Setup. No Subject".to_string());
             }
             Some(x) => x
         };
-        println!("{:?}", title);
+        
+        let cards = doc["Cards"].as_hash();
+        match cards {
+            None => {
+                return Err("No cards to be found!".to_string());
+            }
+            Some(x) => x
+        };
+
+        println!("{:?}", cards);
+        let mut stack = CardStack::default();
+
+        for c in cards {
+            // println!("{:?}", c);
+            let keys = c.keys();
+            
+            for key in keys {
+                let raw_term = key.as_str();
+                let raw_def = c[key].as_str();
+
+                let term = match raw_term {
+                    None => {
+                        return Err(format!("Incorrect formatting for term."));
+                    }
+                    Some(x) => x
+                };
+
+                let definition = match raw_def {
+                    None => {
+                        return Err(format!("Incorrect formatting for definition at term: {}", raw_term.unwrap()));
+                    }
+                    Some(x) => x
+                };
+                
+                let card = Card::build_card(term.to_string(), definition.to_string());
+
+                stack.add_card_to_stack(card);
+            }
+        }
+
         return Ok(Set {
-            title: "hi".to_string(),
-            subject: "joe".to_string(),
-            cards: CardStack::default()
+            title: title.unwrap().to_string(),
+            subject: subject.unwrap().to_string(),
+            cards: stack
         })
     }
 }
