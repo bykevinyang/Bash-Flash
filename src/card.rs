@@ -55,10 +55,10 @@ type Cards = Vec<Card>;
 
 #[derive(Debug)]
 pub struct CardStack {
-    pub set: Cards,         // Reference stack. Should never be touched past creation. 
+    pub stack: Cards,         // Reference stack. Should never be touched past creation. 
                             // For Reference Use Only!
 
-    pub cards: Cards,       // Cards in "play". This is what the user goes through.
+    pub hand: Cards,       // Cards in "play". This is what the user goes through.
     pub correct: Cards,     // Transferred cards from self.cards when answered correctly
     pub missed: Cards       // Transferred cards from self.cards when answered wrong
 }
@@ -66,35 +66,56 @@ pub struct CardStack {
 impl CardStack {
     pub fn build_cardstack(cards: Vec<Card>) -> CardStack {
         return CardStack {
-            set: cards.clone(),
-            cards: cards.clone(),
+            stack: cards.clone(),
+            hand: cards.clone(),
             correct: vec![],
             missed: vec![],
         }
     }
     
     pub fn add_card_to_stack(&mut self, card: Card) {
-        self.set.push(card.clone());
-        self.cards.push(card.clone());
+        self.stack.push(card.clone());
+        self.hand.push(card.clone());
     }
 
     pub fn shuffle(&mut self) {
         self.reset();
         let mut rng = thread_rng();
-        self.cards.shuffle(&mut rng);
+        self.hand.shuffle(&mut rng);
     }
 
     pub fn reset(&mut self) {
-        self.cards = self.set.to_owned();
+        self.hand = self.stack.to_owned();
     }
 
     pub fn add_correct(&mut self, card: Card) {
         self.correct.push(card)
     }
 
+    pub fn add_correct_from_top(&mut self) {
+        if self.hand.len() != 0 {
+            self.correct.push(self.hand.pop().unwrap())
+        }
+    }
+
     pub fn add_miss(&mut self, card: Card) {
         self.missed.push(card)
+    }
 
+    pub fn add_miss_from_top(&mut self) {
+        if self.hand.len() != 0 {
+            self.missed.push(self.hand.pop().unwrap());
+        }
+    }
+
+    pub fn pop(&mut self) -> Option<Card> {
+        return self.hand.pop()
+    }
+}
+
+impl Default for CardStack {
+    fn default() -> Self {
+        CardStack { stack: [].to_vec(), hand: [].to_vec(), correct: [].to_vec(), missed: [].to_vec() }
     }
 }
 
@@ -102,13 +123,13 @@ impl fmt::Display for CardStack {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, 
         "CardStack:
-        - Set:
+        - Stack:
             {:?}
-        - Cards:
+        - Hand:
             {:?}
         - Correct:
             {:?}
         - Missed:
-            {:?}", self.set, self.cards, self.correct, self.missed)
+            {:?}", self.stack, self.hand, self.correct, self.missed)
     }
 }
